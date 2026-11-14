@@ -239,7 +239,7 @@ export const DynamicStory: React.FC<{ name: string; data: Data }> = ({ name, dat
   data.scenes.forEach((s, i) => { if (t >= s.start - 1e-6) idx = i; });
   const sc = data.scenes[idx];
   const base = sc.start;
-  const fade = idx > 0 ? clamp01((t - base) / FADE_SEC) : 1;
+  const fade = idx > 0 && !sc.cut ? clamp01((t - base) / FADE_SEC) : 1; // cut: potong langsung, tanpa pudar
   const q = clamp01((t - base) / SWEEP_SEC);
   const sweeping = idx > 0 && sc.sweep === true && q < 1;
 
@@ -278,7 +278,7 @@ export const DynamicStory: React.FC<{ name: string; data: Data }> = ({ name, dat
               <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: IMG_H, overflow: "hidden" }}>
                 <Img
                   src={staticFile(`${name}/${img.src}`)}
-                  style={{ width: "100%", height: "100%", objectFit: img.fit === "contain" ? "contain" : "cover", transformOrigin: "50% 40%", transform: cam ? undefined : `translate(${(i % 2 ? -1 : 1) * p * 24}px, ${-p * 16}px) scale(${i % 2 ? 1.08 - 0.08 * p : 1 + 0.08 * p})` }}
+                  style={{ width: "100%", height: "100%", objectFit: img.fit === "contain" ? "contain" : "cover", transformOrigin: s.crop ? `${s.crop.x * 100}% ${s.crop.y * 100}%` : "50% 40%", transform: s.crop ? `scale(${s.crop.z * (1 + 0.05 * p)})` : cam ? undefined : `translate(${(i % 2 ? -1 : 1) * p * 24}px, ${-p * 16}px) scale(${i % 2 ? 1.08 - 0.08 * p : 1 + 0.08 * p})` }}
                 />
               </div>
               <div style={{ position: "absolute", left: 0, top: IMG_H - 200, width: 1080, height: 200, background: `linear-gradient(to bottom, rgba(7,11,24,0), ${NAVY})` }} />
