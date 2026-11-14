@@ -175,6 +175,7 @@ T_OK = ('fade', 'slide-left', 'slide-up', 'zoom', 'wipe', 'none')
 T_LIST = [x for x in (data.get('transitions') or []) if x in T_OK]
 def trans_kind(i, s):
     if i == 0: return 'none'
+    if s.get('cut'): return 'none'                                                  # potong langsung (adegan hasil pecahan)
     if s.get('transition') in T_OK: return s['transition']
     if not T_LIST: return 'none'
     r = abs(math.sin((i + 1) * 12.9898) * 43758.5453) % 1
