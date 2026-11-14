@@ -89,6 +89,8 @@ export type Scene = {
   kick?: string | boolean; // guncangan singkat saat kata ini diucapkan (true = kata bertanda * pertama)
   flash?: boolean; // kilatan putih singkat di awal adegan
   roll?: number; // miring awal (derajat, -8..8) yang meluruskan diri dalam 0,4 dtk
+  crop?: { z: number; x: number; y: number }; // bingkai foto: zoom z (1-2,5) berpusat di titik x,y (0-1); dipakai adegan hasil pecahan
+  cut?: boolean; // potong langsung dari adegan sebelumnya (tanpa pudar)
   collage?: string[]; // adegan penutup: 3-5 gambar (src) disusun miring seperti kolase
   // tema "editor" (src/VideoEditor.tsx):
   vidLayout?: "full" | "split-top" | "split-bottom" | "shrink-left" | "shrink-right";
