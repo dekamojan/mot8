@@ -93,6 +93,11 @@ for i, s in enumerate(sc):
             kk = re.sub(r'[^a-z0-9]', '', s['kick'].lower())
             if kk and not any(w.startswith(kk) for w in title_words(s)): warn.append(f"adegan {i}: kick '{s['kick']}' bukan kata di title (guncangan jatuh 0,12 dtk setelah adegan mulai)")
         if any(s.get(x) is not None for x in ('cam', 'kick', 'flash', 'roll')) and d.get('camMode') is None: warn.append(f'adegan {i}: cam/kick/flash/roll baru berlaku bila camMode diisi (soft / dynamic / off)')
+        if s.get('crop') is not None:
+            c = s['crop']
+            if not isinstance(c, dict) or not all(isinstance(c.get(k), (int, float)) and not isinstance(c.get(k), bool) for k in ('z', 'x', 'y')): err.append(f'adegan {i}: crop harus berupa {{z, x, y}} (angka)')
+            elif not (1 <= c['z'] <= 2.5 and 0 <= c['x'] <= 1 and 0 <= c['y'] <= 1): err.append(f'adegan {i}: crop z harus 1-2.5, x dan y harus 0-1')
+        if s.get('cut') is not None and not isinstance(s['cut'], bool): err.append(f'adegan {i}: cut harus true atau false')
         for cj in (s.get('collage') or []):
             if not os.path.exists(f'{D}/{cj}'): err.append(f"adegan {i}: gambar kolase '{cj}' belum ada di {D}/")
         # objek pelengkap (pops): gambar/emoji yang muncul saat kata tertentu diucapkan (lihat src/parts/overlays.tsx)
