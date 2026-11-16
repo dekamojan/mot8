@@ -54,7 +54,7 @@ for i, s in enumerate(sc):
         sm = s.get('small', 0)
         if not isinstance(sm, int) or sm < 0 or sm > n: err.append(f'adegan {i}: small harus bilangan 0..{n} (jumlah kata baris kecil)')
         if isinstance(sm, int) and (sm > 3 or sm > n - 2) and sm > 0: warn.append(f'adegan {i}: small={sm} terlalu besar (maks 3 dan sisakan >=2 kata untuk judul besar); renderer akan mengabaikannya')
-        if not s.get('stage') and d.get('theme') not in ('dynamic', 'editor'): warn.append(f'adegan {i}: stage kosong (hanya teks); pakai sesekali saja')
+        if not s.get('stage') and d.get('theme') not in ('dynamic', 'editor', 'ilustrasi'): warn.append(f'adegan {i}: stage kosong (hanya teks); pakai sesekali saja')
         if s.get('mascot') is not None and s['mascot'] not in MASCOT: err.append(f"adegan {i}: mascot '{s['mascot']}' harus left/center/right")
         if s.get('pose') is not None and s['pose'] not in POSE: err.append(f"adegan {i}: pose '{s['pose']}' tidak dikenal")
         if s.get('vidLayout') is not None and s['vidLayout'] not in VID_LAYOUT: err.append(f"adegan {i}: vidLayout '{s['vidLayout']}' tidak dikenal")
@@ -93,6 +93,41 @@ for i, s in enumerate(sc):
             kk = re.sub(r'[^a-z0-9]', '', s['kick'].lower())
             if kk and not any(w.startswith(kk) for w in title_words(s)): warn.append(f"adegan {i}: kick '{s['kick']}' bukan kata di title (guncangan jatuh 0,12 dtk setelah adegan mulai)")
         if any(s.get(x) is not None for x in ('cam', 'kick', 'flash', 'roll')) and d.get('camMode') is None: warn.append(f'adegan {i}: cam/kick/flash/roll baru berlaku bila camMode diisi (soft / dynamic / off)')
+        if d.get('theme') == 'ilustrasi':                                           # tema ilustrasi (src/parts/ilustrasi.tsx)
+            IL_POSE = {'idle', 'point', 'wave', 'think', 'cheer', 'hold', 'explain', 'shock', 'sad', 'search'}
+            IL_EXPR = {'neutral', 'happy', 'shock', 'sad', 'think', 'smile'}
+            IL_MARK = {'circle', 'underline', 'arrow', 'check', 'cross', 'magnifier'}
+            names = {'nara', 'bimo', 'sari', 'doni'} | set((d.get('cast') or {}).keys())
+            num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)
+            bgv = s.get('bg')
+            if bgv is not None and bgv not in ('kamar', 'jalan', 'grid', 'studio'):
+                if not re.search(r'[./]', str(bgv)): err.append(f"adegan {i}: bg '{bgv}' tidak dikenal (kamar / jalan / grid / studio, atau path gambar)")
+                elif not os.path.exists(f'{D}/{bgv}'): err.append(f"adegan {i}: gambar latar '{bgv}' belum ada di {D}/")
+            if s.get('transition') is not None and s['transition'] not in ('fade', 'whip', 'none'): err.append(f"adegan {i}: transition '{s['transition']}' untuk tema ilustrasi harus fade / whip / none")
+            chars = s.get('chars') if s.get('chars') is not None else []
+            if not isinstance(chars, list): err.append(f'adegan {i}: chars harus berupa array'); chars = []
+            if len(chars) > 3: warn.append(f'adegan {i}: lebih dari 3 tokoh; tampilan akan sempit')
+            for j, c in enumerate(chars):
+                if not isinstance(c, dict): err.append(f'adegan {i}: chars[{j}] harus berupa objek'); continue
+                if c.get('who') is not None and c['who'] not in names: err.append(f"adegan {i}: chars[{j}].who '{c['who']}' tidak dikenal ({', '.join(sorted(names))})")
+                if c.get('pose') is not None and c['pose'] not in IL_POSE: err.append(f"adegan {i}: chars[{j}].pose '{c['pose']}' tidak dikenal ({', '.join(sorted(IL_POSE))})")
+                if c.get('expr') is not None and c['expr'] not in IL_EXPR: err.append(f"adegan {i}: chars[{j}].expr '{c['expr']}' tidak dikenal ({', '.join(sorted(IL_EXPR))})")
+                if c.get('acc') is not None and c['acc'] not in ('magnifier', 'phone', 'none'): err.append(f"adegan {i}: chars[{j}].acc harus magnifier / phone / none")
+                if c.get('hat') is not None and c['hat'] not in ('detective', 'cap', 'none'): err.append(f"adegan {i}: chars[{j}].hat harus detective / cap / none")
+                if c.get('x') is not None and (not num(c['x']) or not 0 <= c['x'] <= 1): err.append(f'adegan {i}: chars[{j}].x harus angka 0-1')
+            marks = s.get('marks') if s.get('marks') is not None else []
+            if not isinstance(marks, list): err.append(f'adegan {i}: marks harus berupa array'); marks = []
+            for j, m in enumerate(marks):
+                if not isinstance(m, dict) or m.get('type') not in IL_MARK: err.append(f"adegan {i}: marks[{j}].type harus salah satu dari {', '.join(sorted(IL_MARK))}"); continue
+                if not num(m.get('x')) or not num(m.get('y')) or not (0 <= m['x'] <= 1 and 0 <= m['y'] <= 1): err.append(f'adegan {i}: marks[{j}] butuh x dan y (angka 0-1)')
+                check_at(i, f'marks[{j}]', m.get('word') if m.get('word') is not None else m.get('at'), s)
+            for j, b in enumerate(s.get('bubbles') or []):
+                if not isinstance(b, dict) or not str(b.get('text', '')).strip(): err.append(f'adegan {i}: bubbles[{j}] butuh text'); continue
+                check_at(i, f'bubbles[{j}]', b.get('word') if b.get('word') is not None else b.get('at'), s)
+            if s.get('badge') is not None and (not isinstance(s['badge'], dict) or not str(s['badge'].get('text', '')).strip()): err.append(f'adegan {i}: badge butuh text')
+            if s.get('big') is not None:
+                if not isinstance(s['big'], dict) or not str(s['big'].get('text', '')).strip(): err.append(f'adegan {i}: big butuh text')
+                elif len(str(s['big']['text']).split()) > 3: warn.append(f'adegan {i}: big sebaiknya 1-3 kata')
         if s.get('crop') is not None:
             c = s['crop']
             if not isinstance(c, dict) or not all(isinstance(c.get(k), (int, float)) and not isinstance(c.get(k), bool) for k in ('z', 'x', 'y')): err.append(f'adegan {i}: crop harus berupa {{z, x, y}} (angka)')
@@ -138,13 +173,18 @@ for i, s in enumerate(sc):
         if s['start'] <= sc[i - 1]['start']: err.append(f'adegan {i}: start harus naik terus')
         elif s['start'] - sc[i - 1]['start'] < 1.0: warn.append(f'adegan {i}: jarak start < 1 dtk (prepare.py akan memaksa min 0.8 dtk)')
 if EX:
-    if d.get('theme') not in (None, 'clean', 'hud', 'classic', 'tutorial', 'neon', 'dynamic', 'editor'): err.append(f"theme '{d.get('theme')}' tidak dikenal (clean / hud / classic / tutorial / neon / dynamic / editor)")
+    if d.get('theme') not in (None, 'clean', 'hud', 'classic', 'tutorial', 'neon', 'dynamic', 'editor', 'ilustrasi'): err.append(f"theme '{d.get('theme')}' tidak dikenal (clean / hud / classic / tutorial / neon / dynamic / editor / ilustrasi)")
     if d.get('charStyle') == 'sprite':
         for k in ('charImg', 'charTalkImg'):
             if d.get(k) and not os.path.exists(f'{D}/{d[k]}'): err.append(f"file karakter '{d[k]}' belum ada di {D}/ (upload PNG transparan ke folder itu)")
         if not d.get('charImg'): err.append('charStyle sprite butuh charImg')
     if d.get('camMode') is not None and d['camMode'] not in ('off', 'soft', 'dynamic'): err.append(f"camMode '{d['camMode']}' tidak dikenal (off / soft / dynamic)")
-    if d.get('camMode') is not None and d.get('theme') != 'dynamic': warn.append('camMode hanya dipakai tema dynamic (diabaikan di tema lain)')
+    if d.get('camMode') is not None and d.get('theme') not in ('dynamic', 'ilustrasi'): warn.append('camMode hanya dipakai tema dynamic dan ilustrasi (diabaikan di tema lain)')
+    for nm, cd in (d.get('cast') or {}).items():                                # tokoh buatan sendiri (tema ilustrasi)
+        if not isinstance(cd, dict): err.append(f"cast '{nm}' harus berupa objek"); continue
+        if cd.get('hairStyle') is not None and cd['hairStyle'] not in ('bun', 'bob', 'short', 'spiky', 'cap'): err.append(f"cast '{nm}': hairStyle harus bun / bob / short / spiky / cap")
+        for ck in ('hair', 'skin', 'outfit', 'trim', 'shoes'):
+            if cd.get(ck) is not None and not re.match(r'^#[0-9a-fA-F]{6}$', str(cd[ck])): err.append(f"cast '{nm}': {ck} harus #RRGGBB")
     valid_bgs = {'cream', 'mint', 'sky', 'sunset', 'paper', 'grid', 'dark', 'navy'}
     if d.get('theme') == 'classic':
         valid_bgs = valid_bgs | BG
