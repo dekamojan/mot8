@@ -12,6 +12,7 @@ import { Ctx, clamp01, fallbackWords } from "./parts/ui";
 import { StageItem } from "./parts/blocks";
 import { PopLayer } from "./parts/overlays";
 import { DynamicStory } from "./parts/dynamic";
+import { IlustrasiStory } from "./parts/ilustrasi";
 import { VideoEditor } from "./VideoEditor";
 import type { Data } from "./parts/types";
 import type { Pose } from "./parts/mascots";
@@ -25,6 +26,7 @@ export const Explainer: React.FC<StoryProps> = ({ name, data: d }) => {
   const data = d as unknown as Data;
   if (data.theme === "editor" || data.hasVideo) return <VideoEditor name={name} data={data} />;
   if (data.theme === "dynamic") return <DynamicStory name={name} data={data} />; // tema dinamis: renderer terpisah (parts/dynamic.tsx)
+  if (data.theme === "ilustrasi") return <IlustrasiStory name={name} data={data} />; // tema ilustrasi: renderer terpisah (parts/ilustrasi.tsx)
   const t = frame / fps;
   const hud = data.theme === "hud";
   const classic = data.theme === "classic";
