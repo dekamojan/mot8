@@ -171,7 +171,7 @@ USE_MUSIC, USE_SFX, USE_BLOCKSFX = AUD.get('music', True), AUD.get('sfx', True),
 EXPLAINER = data.get('style') == 'explainer'
 HUD = EXPLAINER and data.get('theme') == 'hud'
 EDITOR = EXPLAINER and (data.get('theme') == 'editor' or data.get('hasVideo') is True)
-T_OK = ('fade', 'slide-left', 'slide-up', 'zoom', 'wipe', 'none')
+T_OK = ('fade', 'slide-left', 'slide-up', 'zoom', 'wipe', 'none', 'whip')
 T_LIST = [x for x in (data.get('transitions') or []) if x in T_OK]
 def trans_kind(i, s):
     if i == 0: return 'none'
@@ -210,6 +210,7 @@ TSFX = {
     'wipe':       dict(type='whoosh', d=.4, f0=4500, f1=500, pan=.3, gain=.45),
     'zoom':       dict(type='rise', d=.45, f0=250, f1=1100, gain=1.0),
     'fade':       dict(type='shimmer', d=.6, gain=1.0),
+    'whip':       dict(type='whoosh', d=.4, f0=600, f1=6500, pan=0, gain=.6),
 }
 sfx = [dict(t=0.0, type='pop', gain=.5)]
 for i, s in enumerate(scenes):
@@ -306,6 +307,29 @@ if EXPLAINER and data.get('theme') == 'dynamic' and USE_BLOCKSFX:   # bunyi efek
             at = st + max(0, pp['at']) if isinstance(pp.get('at'), (int, float)) and not isinstance(pp.get('at'), bool) else _wt(si, pp.get('word'), st + .3 + pi * .25)
             sfx.append(dict(t=round(at, 3), type='pop', gain=.3))
         if s.get('collage'): sfx.append(dict(t=round(st + .2, 3), type='sparkle'))
+if EXPLAINER and data.get('theme') == 'ilustrasi' and USE_BLOCKSFX:   # bunyi tema ilustrasi: lencana, coretan, balon, teks besar, tokoh baru, guncangan
+    def _it(si, word, at, dflt):
+        if isinstance(at, (int, float)) and not isinstance(at, bool): return scenes[si]['start'] + max(0, at)
+        k = norm(word or '')
+        h = next((w for w in words if w['s'] == si and k and norm(w['w']).startswith(k)), None)
+        return h['a'] if h else dflt
+    for si, s in enumerate(scenes):
+        st = s['start']
+        if s.get('badge'): sfx.append(dict(t=round(st + .1, 3), type='plink', gain=.4))
+        for mi, m in enumerate(s.get('marks') or []):
+            if not isinstance(m, dict): continue
+            tt = round(_it(si, m.get('word'), m.get('at'), st + .4 + mi * .35), 3)
+            if m.get('type') == 'magnifier': sfx.append(dict(t=tt, type='rise', d=.5, f0=300, f1=1200, gain=.4))
+            elif m.get('type') == 'check': sfx.append(dict(t=tt, type='plink', gain=.5))
+            else: sfx.append(dict(t=tt, type='tick', gain=.6))
+        for bi, b in enumerate(s.get('bubbles') or []):
+            if isinstance(b, dict): sfx.append(dict(t=round(_it(si, b.get('word'), b.get('at'), st + .5 + bi * .3), 3), type='pop', gain=.4))
+        if isinstance(s.get('big'), dict): sfx.append(dict(t=round(_it(si, s['big'].get('word'), None, st + .25), 3), type='impact', gain=.35))
+        if si and s.get('chars') and not scenes[si - 1].get('chars'): sfx.append(dict(t=round(st + .08, 3), type='pop', gain=.35))
+        if s.get('kick'):
+            hl = next((w['a'] for w in words if w['s'] == si and w.get('hl')), st + .12)
+            kw = s['kick'] if isinstance(s['kick'], str) else ''
+            sfx.append(dict(t=round(_it(si, kw, None, hl) if kw else hl, 3), type='thud', gain=.6))
 if data.get('cta'): sfx += [dict(t=round(DUR - 2.0, 3), type='sparkle'), dict(t=round(DUR - 2.0, 3), type='pop', gain=.6)]
 if not USE_SFX: sfx = []
 music = dict(profile='bed', bpm=100, bars=['C', 'G', 'Am', 'F'], breaks=[], arp_from=2.0, hat_from=4.0, clap_from=999, final=round(max(DUR - 1.6, 1.0), 3))
