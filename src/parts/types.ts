@@ -1,4 +1,5 @@
 // TIPE DATA: bentuk scenes.src.json yang dibaca renderer (Scene, Item/blok, Data). Tambah atribut baru di sini.
+import type { Expr, MarkType, PersonDef, Pose } from "./ilustrasi_art";
 
 export type W = { w: string; hl: boolean; a: number; b: number; s: number };
 
@@ -61,6 +62,13 @@ export type Item = {
   shrink?: number; // internal (diisi renderer): skala 0.6-1 untuk gambar yang dikecilkan saat adegan bermaskot
 };
 
+// Tema "ilustrasi" (lihat parts/ilustrasi.tsx dan parts/ilustrasi_art.tsx)
+export type CharSpec = { who?: string; x?: number; pose?: Pose; expr?: Expr; acc?: "magnifier" | "phone" | "none"; hat?: "detective" | "cap" | "none"; flip?: boolean; scale?: number; talk?: boolean };
+export type MarkSpec = { type: MarkType; x: number; y: number; w?: number; h?: number; x2?: number; y2?: number; word?: string; at?: number; color?: string };
+export type BubbleSpec = { text: string; x?: number; y?: number; word?: string; at?: number; tone?: "white" | "yellow" };
+export type BadgeSpec = { n?: number; text: string; small?: string };
+export type BigSpec = { text: string; word?: string; color?: string };
+
 // Objek pelengkap yang muncul dengan gerakan saat kata tertentu (lihat parts/overlays.tsx)
 export type Pop = { word?: string; at?: number; img?: string; glyph?: string; x?: number; y?: number; s?: number; dur?: number; anim?: "pop" | "drop" | "slide-left" | "slide-right" | "spin" };
 export type Scene = {
@@ -95,12 +103,24 @@ export type Scene = {
   // tema "editor" (src/VideoEditor.tsx):
   vidLayout?: "full" | "split-top" | "split-bottom" | "shrink-left" | "shrink-right";
   triggerWord?: string;
+  // tema "ilustrasi" (src/parts/ilustrasi.tsx):
+  chars?: CharSpec[]; // tokoh di adegan (maks 3)
+  marks?: MarkSpec[]; // coretan: lingkaran, garis bawah, panah, centang, silang, kaca pembesar
+  bubbles?: BubbleSpec[]; // balon kata
+  badge?: BadgeSpec; // lencana "INI NAMANYA (3) RISET PESAING"
+  big?: BigSpec; // teks besar ("JADI KAYA!")
+  rays?: boolean; // sinar cahaya
+  dust?: boolean; // partikel debu
+  fg?: boolean; // tanaman depan buram
+  speaker?: number; // indeks tokoh yang bibirnya bergerak mengikuti suara (bawaan 0)
+  stageScale?: number; // skala blok infografis (bawaan 0,78 bila ada tokoh)
 };
 
 export type Data = {
   durationInFrames: number;
-  theme?: "clean" | "hud" | "classic" | "tutorial" | "neon" | "dynamic" | "editor";
+  theme?: "clean" | "hud" | "classic" | "tutorial" | "neon" | "dynamic" | "editor" | "ilustrasi";
   hasVideo?: boolean;
+  cast?: Record<string, PersonDef>; // tema ilustrasi: tokoh buatan sendiri (nama -> warna kulit/rambut/baju, gaya rambut, kacamata, ...)
   videoSrc?: string;
   textMode?: "headline" | "caption" | "both"; // hud/tutorial: judul besar di atas, caption di bawah, atau keduanya (bawaan: caption)
   brand?: string;
