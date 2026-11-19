@@ -1,0 +1,214 @@
+{
+  "style": "explainer",
+  "scenes": [
+    {
+      "title": "Aku *nyesel* *banget* sih baru tahu",
+      "start": 0,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img01.png",
+          "h": 960,
+          "frame": false
+        }
+      ],
+      "punch": "NYESEL",
+      "punchWord": "nyesel",
+      "punchAt": "low"
+    },
+    {
+      "title": "kalau jualan itu nggak harus nunggu",
+      "start": 1.9,
+      "small": 0,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img01.png",
+          "h": 960,
+          "frame": false,
+          "hold": true
+        }
+      ],
+      "crop": {
+        "z": 1.5,
+        "x": 0.5,
+        "y": 0.3
+      },
+      "cut": true,
+      "transition": "none",
+      "pops": [
+        {
+          "word": "jualan",
+          "glyph": "🛒",
+          "anim": "pop",
+          "s": 0.85
+        }
+      ]
+    },
+    {
+      "title": "*produknya* *sempurna* dulu.",
+      "start": 3.7,
+      "small": 0,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img02.png",
+          "h": 960,
+          "frame": false
+        }
+      ],
+      "pops": [
+        {
+          "word": "produknya",
+          "glyph": "📦",
+          "anim": "pop",
+          "s": 0.9
+        }
+      ]
+    },
+    {
+      "title": "Coba deh *tawarkan* *dulu* konsepnya",
+      "start": 5.1,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img03.png",
+          "h": 960,
+          "frame": false
+        }
+      ]
+    },
+    {
+      "title": "ke temen-temen deket lewat WhatsApp.",
+      "start": 7.1,
+      "small": 0,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img03.png",
+          "h": 960,
+          "frame": false,
+          "hold": true
+        }
+      ],
+      "crop": {
+        "z": 1.4,
+        "x": 0.3,
+        "y": 0.62
+      },
+      "cut": true,
+      "transition": "none"
+    },
+    {
+      "title": "*Terus,* *minta* DP dikit aja buat tanda jadi, ya.",
+      "start": 9.1,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img04.png",
+          "h": 960,
+          "frame": false
+        }
+      ],
+      "punch": "TERUS",
+      "punchWord": "Terus",
+      "punchAt": "top"
+    },
+    {
+      "title": "Jadi kamu nggak *bakal* *rugi* stok barang kok kalau seandainya nggak",
+      "start": 11.9,
+      "small": 1,
+      "stage": [],
+      "pops": [
+        {
+          "word": "barang",
+          "glyph": "📦",
+          "anim": "pop",
+          "s": 0.95
+        }
+      ],
+      "look": "peach",
+      "sweep": true
+    },
+    {
+      "title": "*laku.* Kamu *pasti* bakal ngerasa jauh lebih berani lho",
+      "start": 15.4,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img05.png",
+          "h": 960,
+          "frame": false
+        }
+      ],
+      "pops": [
+        {
+          "word": "berani",
+          "glyph": "💪",
+          "anim": "pop",
+          "s": 0.75
+        }
+      ]
+    },
+    {
+      "title": "karena udah dapet",
+      "start": 18.4,
+      "small": 0,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img05.png",
+          "h": 960,
+          "frame": false,
+          "hold": true
+        }
+      ],
+      "crop": {
+        "z": 1.4,
+        "x": 0.7,
+        "y": 0.62
+      },
+      "cut": true,
+      "transition": "none"
+    },
+    {
+      "title": "*pembeli* *pertama.* Simpen ya video ini buat pegangan kamu.",
+      "start": 19.4,
+      "small": 1,
+      "stage": [],
+      "look": "teal",
+      "sweep": true,
+      "collage": [
+        "img/img01.png",
+        "img/img02.png",
+        "img/img03.png",
+        "img/img04.png",
+        "img/img05.png"
+      ]
+    }
+  ],
+  "header": false,
+  "accent": "#22d3ee",
+  "charColor": "#222222",
+  "showCta": false,
+  "charStyle": "block",
+  "transitions": [
+    "fade"
+  ],
+  "transitionsMode": "cycle",
+  "backgrounds": [
+    "cream"
+  ],
+  "bgMode": "single",
+  "bgEvery": 3,
+  "theme": "dynamic",
+  "audio": {
+    "music": true,
+    "sfx": true,
+    "blockSfx": true
+  }
+}
