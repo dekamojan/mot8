@@ -1,0 +1,105 @@
+{
+  "style": "explainer",
+  "scenes": [
+    {
+      "title": "Aku *nyesel* *banget* sih baru tahu kalau jualan itu nggak harus nunggu",
+      "start": 0,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img01.png",
+          "h": 960,
+          "frame": false
+        }
+      ]
+    },
+    {
+      "title": "*produknya* *sempurna* dulu.",
+      "start": 3.7,
+      "small": 0,
+      "stage": [
+        {
+          "type": "chip",
+          "title": "PRODUKNYA SEMPURNA",
+          "sub": "dulu.",
+          "icon": "👂",
+          "tone": "#3b6fd8"
+        }
+      ]
+    },
+    {
+      "title": "Coba deh *tawarkan* *dulu* konsepnya ke temen-temen deket lewat WhatsApp.",
+      "start": 5.1,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img02.png",
+          "h": 960,
+          "frame": false
+        }
+      ]
+    },
+    {
+      "title": "*Terus,* *minta* DP dikit aja buat tanda jadi, ya.",
+      "start": 9.1,
+      "small": 1,
+      "stage": [
+        {
+          "type": "chip",
+          "title": "TERUS, MINTA",
+          "sub": "DP dikit aja",
+          "icon": "⚡",
+          "tone": "#3b6fd8"
+        }
+      ]
+    },
+    {
+      "title": "Jadi kamu nggak *bakal* *rugi* stok barang kok kalau seandainya nggak",
+      "start": 11.9,
+      "small": 1,
+      "stage": []
+    },
+    {
+      "title": "*laku.* Kamu *pasti* bakal ngerasa jauh lebih berani lho karena udah dapet",
+      "start": 15.4,
+      "small": 1,
+      "stage": [
+        {
+          "type": "image",
+          "src": "img/img03.png",
+          "h": 960,
+          "frame": false
+        }
+      ]
+    },
+    {
+      "title": "*pembeli* *pertama.* Simpen ya video ini buat pegangan kamu.",
+      "start": 19.4,
+      "small": 1,
+      "stage": []
+    }
+  ],
+  "header": false,
+  "accent": "#e5252a",
+  "charColor": "#222222",
+  "showCta": false,
+  "charStyle": "stick",
+  "transitions": [
+    "slide-left",
+    "wipe"
+  ],
+  "transitionsMode": "cycle",
+  "backgrounds": [
+    "cream"
+  ],
+  "bgMode": "single",
+  "bgEvery": 3,
+  "theme": "clean",
+  "audio": {
+    "music": true,
+    "sfx": true,
+    "blockSfx": true
+  }
+}
